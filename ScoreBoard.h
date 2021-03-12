@@ -29,7 +29,7 @@ private:
 		int xTurn;
 	} theLastMatch;
 	// For file txt last match
-	string lastXName, lastOName, lastTurn, lastData;
+	string lastXName, lastOName, lastData;
 
 	// For saving data copy from txt
 	string txtData;
@@ -53,7 +53,6 @@ public:
 
 		lastXName = "<lastXName>";
 		lastOName = "<lastOName>";
-		lastTurn = "<lastTurn>";
 		lastData = "<lastData>";
 	}
 
@@ -85,14 +84,9 @@ public:
 		theLastMatch.xName = txtData.substr(findFront, lenght);
 
 		findFront = txtData.find(lastOName, findFront + 1) + 11;
-		findBack = txtData.find(lastTurn, findBack + 1);
-		lenght = findBack - findFront;
-		theLastMatch.oName = txtData.substr(findFront, lenght);
-
-		findFront = txtData.find(lastTurn, findFront + 1) + 10;
 		findBack = txtData.find(lastData, findBack + 1);
 		lenght = findBack - findFront;
-		theLastMatch.xTurn = stoi(txtData.substr(findFront, lenght));
+		theLastMatch.oName = txtData.substr(findFront, lenght);
 
 		findFront = txtData.find(lastData, findFront + 1) + 10;
 		findBack = txtData.find(last, findBack + 1);
@@ -196,7 +190,6 @@ public:
 		// Last Match data
 		fileOut << lastXName << theLastMatch.xName;
 		fileOut << lastOName << theLastMatch.oName;
-		fileOut << lastTurn << to_string(theLastMatch.xTurn);
 		fileOut << lastData;
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 14; j++) {
