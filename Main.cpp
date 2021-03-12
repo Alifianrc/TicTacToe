@@ -144,7 +144,7 @@ public:
 
 	// For resume game
 	void resumeGame() {
-		int arenaCount = 0;
+		int arenaXCount = 0, arenaOCount = 0;
 
 		// Load last arena
 		for (int i = 0; i < 6; i++) {
@@ -158,30 +158,42 @@ public:
 
 				// Check arena condition
 				if (arenaData[i][j] == 1) {
-					arenaCount++;
+					arenaXCount++;
+				}
+				else if (arenaData[i][j] == 2) {
+					arenaOCount++;
 				}
 			}
 		}
 
 		// Can't resume if arena data empty
-		if (arenaCount == 0 && getLastMatchXName() == "null" && getLastMatchOName() == "null") {
+		if (arenaXCount == 0 && getLastMatchXName() == "null" && getLastMatchOName() == "null") {
 			drawMenu(menuA);
 			cout << "\n     No resume data";
 		}
 
 		else {
-			if (getLastMatchTrun() == 1) {
+			// Set witch turn
+			if (arenaXCount > arenaOCount) {
+				setXTurn(false);
+			}
+			else if (arenaXCount < arenaOCount) {
 				setXTurn(true);
 			}
 			else {
-				setXTurn(false);
+				setXTurn(true);
 			}
 			
+			// Set stepCount
+			stepCount = arenaXCount + arenaOCount;
+
+			// Set arena data
 			setBox(arenaData);
 
+			// Set player name
 			setPlayerName(getLastMatchXName(), getLastMatchOName());
 
-
+			// Diactivate menu
 			inMenu = false;
 			inGame = true;
 			drawBoxes();
