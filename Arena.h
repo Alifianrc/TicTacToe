@@ -3,7 +3,7 @@
 using namespace std;
 
 // Bix size is 3x3
-static int boxSize = 3;
+static int boxSize = 5;
 
 class Boxes {
 private:
@@ -45,8 +45,8 @@ public:
 
 	// Set arena to default
 	void SetArenaToDefault() {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < boxSize; i++) {
+			for (int j = 0; j < boxSize; j++) {
 				arenaData[i][j] = 0;
 			}
 		}
