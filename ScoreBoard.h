@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -20,14 +21,6 @@ private:
 	// Address file txt
 	string fileName;
 
-	struct lastMatch {
-		// Name Player x dan o
-		string xName, oName;
-		// Last condition arena
-		int arenaData[6][14];
-		// 1 if xTunr, 2 if oTurn
-		int xTurn;
-	} theLastMatch;
 	// For file txt last match
 	string lastXName, lastOName, lastData;
 
@@ -35,6 +28,7 @@ private:
 	string txtData;
 	int MAX;
 	char temp[1000];
+	vector<int> lastMatchData;
 
 public:
 
@@ -56,7 +50,7 @@ public:
 		lastData = "<lastData>";
 	}
 
-	// Load data from txt file
+	// Load data from txt and get scoreboard data
 	void loadData(){
 		int findFront = 0, findBack = 0, lenght;
 
@@ -76,27 +70,7 @@ public:
 		}
 		// Close txt file
 		file.close();
-
-		// Load last match data
-		findFront = txtData.find(lastXName, findFront + 1) + 11;
-		findBack = txtData.find(lastOName, findBack + 1);
-		lenght = findBack - findFront;
-		theLastMatch.xName = txtData.substr(findFront, lenght);
-
-		findFront = txtData.find(lastOName, findFront + 1) + 11;
-		findBack = txtData.find(lastData, findBack + 1);
-		lenght = findBack - findFront;
-		theLastMatch.oName = txtData.substr(findFront, lenght);
-
-		findFront = txtData.find(lastData, findFront + 1) + 10;
-		findBack = txtData.find(last, findBack + 1);
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				theLastMatch.arenaData[i][j] = stoi(txtData.substr(findFront, 1));
-				findFront++;
-			}
-		}
-		
+				
 		// Load scoreboard
 		for (int i = 0; i < 100; i++) {
 			findFront = txtData.find(xNam, findFront + 1) + 7;
@@ -116,28 +90,35 @@ public:
 		}
 	}
 
-	// Set Last match data for resume data
-	void setLastMatchData(string xN, string oN, int turn, int data[6][14]) {
-		theLastMatch.xName = xN;
-		theLastMatch.oName = oN;
-		theLastMatch.xTurn = turn;
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				theLastMatch.arenaData[i][j] = data[i][j];
-			}
-		}		
+	// Get last match x name from data
+	string GetLastMatchXName() {
+		int findFront = 0, findBack = 0, lenght;
+		
+		findFront = txtData.find(lastXName, findFront + 1) + 11;
+		findBack = txtData.find(lastOName, findBack + 1);
+		lenght = findBack - findFront;
+		string data = txtData.substr(findFront, lenght);
+		return data;
 	}
 
-	// Set Last match data to null (no resume data)
-	void resetLastMatchData() {
-		theLastMatch.xName = "null";
-		theLastMatch.oName = "null";
-		theLastMatch.xTurn = 1;
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				theLastMatch.arenaData[i][j] = 0;
-			}
-		}
+	// Get last match x name from data
+	string GetLastMatchOName() {
+		int findFront = 0, findBack = 0, lenght;
+
+		findFront = txtData.find(lastOName, findFront + 1) + 11;
+		findBack = txtData.find(lastData, findBack + 1);
+		lenght = findBack - findFront;
+		string data = txtData.substr(findFront, lenght);
+		return data;
+	}
+
+	int GetLastMatchData(int x) {
+		int findFront = 0;
+
+		findFront = txtData.find(lastData, findFront + 1) + 10 + x;
+		int data = stoi(txtData.substr(findFront, 1));
+
+		return data;
 	}
 
 	// Add new data score
@@ -159,27 +140,12 @@ public:
 		}
 	}
 
-	// Get function
-	string getLastMatchXName() {
-		return theLastMatch.xName;
-	}
-
-	// Get function
-	string getLastMatchOName() {
-		return theLastMatch.oName;
-	}
-
-	int getLastMatchTrun() {
-		return theLastMatch.xTurn;
-	}
-
-	// Get function
-	int getLastMatchArena(int x, int y) {
-		return theLastMatch.arenaData[x][y];
+	void saveArenaData(int value) {
+		lastMatchData.push_back(value);
 	}
 
 	// Save the data to file txt
-	void saveGame() {
+	void saveGame(string lastXNameData, string lastONameData) {
 		// Open file
 		ofstream fileOut;
 		fileOut.open(fileName);
@@ -188,15 +154,15 @@ public:
 		fileOut << data << endl;
 
 		// Last Match data
-		fileOut << lastXName << theLastMatch.xName;
-		fileOut << lastOName << theLastMatch.oName;
+		
+		fileOut << lastXName << lastXNameData;
+		fileOut << lastOName << lastONameData;
 		fileOut << lastData;
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				fileOut << to_string(theLastMatch.arenaData[i][j]);
-			}
+		for (int i = 0; i < lastMatchData.size(); i++) {
+			fileOut << to_string(lastMatchData[i]);
 		}
 		fileOut << last << endl;
+		
 
 		// Score data
 		for (int i = 0; i < 100; i++) {
@@ -210,6 +176,12 @@ public:
 
 		// Close txt file
 		fileOut.close();
+
+		// Reset Vector
+		lastMatchData.clear();
+
+		// Reset txtData
+		txtData = "";
 	}
 
 	// Show the scoreboard

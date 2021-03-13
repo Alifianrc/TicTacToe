@@ -7,14 +7,10 @@ using namespace std;
 class TicTacToe : public Boxes, public Player, public scoreBoards {
 private:
 	bool inMenu, isQuit, inGame;
-	int arenaData[6][14];
-
+	
 	// For Menu
 	char menuInput;
 	int menuA;
-
-	// Cursor position
-	int cursorPosition[1][2];
 	
 	// Step
 	int stepCount = 0;
@@ -35,26 +31,8 @@ public:
 		// Load game data
 		loadData();
 
-		// Cursor deafult
-		cursorPosition[0][0] = 1;
-		cursorPosition[0][1] = 2;
-
 		// Menu default
 		menuA = 0;
-
-		// Arena default
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				if (cursorPosition[0][0] == i && cursorPosition[0][1] == j) {
-					arenaData[i][j] = 3;
-				}
-				else {
-					arenaData[i][j] = 0;
-				}			
-			}
-		}
-		// Set Dasar Arena
-		setBox(arenaData);
 
 		// Draw Menu
 		drawMenu(menuA);
@@ -147,38 +125,33 @@ public:
 		int arenaXCount = 0, arenaOCount = 0;
 
 		// Load last arena
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				arenaData[i][j] = getLastMatchArena(i, j);
-				// Set cursor
-				if (arenaData[i][j] == 3) {
-					cursorPosition[0][0] = i;
-					cursorPosition[0][1] = j;
-				}
+		setPlayerName(GetLastMatchXName(), GetLastMatchOName());
+		int tempCount = 0;
+		for (int i = 0; i < boxSize; i++) {
+			for (int j = 0; j < boxSize; j++) {
+				int data = GetLastMatchData(tempCount);
+				tempCount++;
+				SetArenaData(i, j, data);
 
-				// Check arena condition
-				if (arenaData[i][j] == 1) {
+				if (data == 1) {
 					arenaXCount++;
 				}
-				else if (arenaData[i][j] == 2) {
+				else if(data == 2) {
 					arenaOCount++;
 				}
 			}
 		}
 
 		// Can't resume if arena data empty
-		if (arenaXCount == 0 && getLastMatchXName() == "null" && getLastMatchOName() == "null") {
+		if (getXName() == "null" && getOName() == "null") {
 			drawMenu(menuA);
 			cout << "\n     No resume data";
 		}
-
+		// If data wasn't empty
 		else {
 			// Set witch turn
 			if (arenaXCount > arenaOCount) {
 				setXTurn(false);
-			}
-			else if (arenaXCount < arenaOCount) {
-				setXTurn(true);
 			}
 			else {
 				setXTurn(true);
@@ -187,46 +160,44 @@ public:
 			// Set stepCount
 			stepCount = arenaXCount + arenaOCount;
 
-			// Set arena data
-			setBox(arenaData);
-
-			// Set player name
-			setPlayerName(getLastMatchXName(), getLastMatchOName());
-
 			// Diactivate menu
 			inMenu = false;
 			inGame = true;
 			drawBoxes();
 		}	
 	}
-
 	// For Game
 	void mainGame() {
 		bool isUpdate = gameInput();
 
 		if (isUpdate && !gameOver) {
-			updateMap();
+			drawBoxes();
 			gameOver = checkWin();
-			drawBoxes();			
 		}
+		// Game is Finish
 		else if (gameOver) {
+			// Show Winner
 			if (winner == 1) {
 				cout << "    Winner is x";
 			}
 			else if (winner == 2) {
 				cout << "    Winner is o";
 			}
-			else {
+			else if (winner == 3) {
 				cout << "        Draw";
 			}
 			cout << "\n\n";
 
-			// Reset last Match data???
-			resetLastMatchData();
-
-			// Save the game
+			// Change scoreboard
 			setDataScore(getXName(), getOName(), winner);
-			saveGame();
+
+			// Save the game and reset last match data to null (can't resume)
+			for (int i = 0; i < boxSize; i++) {
+				for (int j = 0; j < boxSize; j++) {
+					saveArenaData(0);
+				}
+			}
+			saveGame("null", "null");
 
 			// Setting bool
 			inGame = false;
@@ -240,17 +211,15 @@ public:
 			system("pause");
 			drawMenu(menuA);
 		}
+		// Player press p
 		else if (stopGame) {
-			// Save match
-			int turn;
-			if (getXturn()) {
-				turn = 1;
+			// Save the game
+			for (int i = 0; i < boxSize; i++) {
+				for (int j = 0; j < boxSize; j++) {
+					saveArenaData(getArenaData(i, j));
+				}
 			}
-			else {
-				turn = 2;
-			}
-			setLastMatchData(getXName(), getOName(), turn, arenaData);
-			saveGame();
+			saveGame(getXName(), getOName());
 
 			// Setting bool
 			inGame = false;
@@ -268,40 +237,34 @@ public:
 		bool update = false;
 		char input = getInput();
 		if (input == 'w') {
-			if (cursorPosition[0][0] != 1) {
-				cursorPosition[0][0] -= 2;
+			if (getCursorLoaction(0, 0) != 0) {
+				setCursorLocation(0, 0, 0);
 			}
 			update = true;
 		}
 		else if (input == 'a') {
-			if (cursorPosition[0][1] != 2) {
-				cursorPosition[0][1] -= 4;
+			if (getCursorLoaction(0, 1) != 0) {
+				setCursorLocation(0, 1, 0);
 			}
 			update = true;
 		}
 		else if (input == 's') {
-			if (cursorPosition[0][0] != 5) {
-				cursorPosition[0][0] += 2;
+			if (getCursorLoaction(0, 0) != (boxSize - 1)) {
+				setCursorLocation(0, 0, 1);
 			}
 			update = true;
 		}
 		else if (input == 'd') {
-			if (cursorPosition[0][1] != 10) {
-				cursorPosition[0][1] += 4;
+			if (getCursorLoaction(0, 1) != (boxSize - 1)) {
+				setCursorLocation(0, 1, 1);
 			}
 			update = true;
 		}
 		else if (input == '\r') {
+			bool ponAssigned = false;
 			// Assign Pon
-			if (!getArenaLock((cursorPosition[0][0] - 1), cursorPosition[0][1])) {
-				if (getXturn()) {
-					arenaData[(cursorPosition[0][0] - 1)][cursorPosition[0][1]] = 1;
-					setXturn();
-				}
-				else {
-					arenaData[(cursorPosition[0][0] - 1)][cursorPosition[0][1]] = 2;
-					setXturn();
-				}
+			ponAssigned = AssignPon();
+			if (ponAssigned == true) {
 				stepCount++;
 			}
 			update = true;
@@ -313,125 +276,93 @@ public:
 
 		return update;
 	}
-	// Update map
-	void updateMap() {
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				// Update cursor position
-				if (cursorPosition[0][0] == i && cursorPosition[0][1] == j) {
-					arenaData[i][j] = 3;
-				}
-				// Delete last cursor position
-				else if (i == 1 || i == 3 || i == 5) {
-					arenaData[i][j] = 0;
-				}
-			}
-		}
-		// Update 
-		setBox(arenaData);
-	}
 	// Check win condition
 	bool checkWin() {
 		// Draw case
-		if (stepCount >= 9) {
-			winner = 4;
+		if (stepCount >= (boxSize * boxSize)) {
+			winner = 3;
 			return true;
 		}
 
-		int x = 0, y = 2;
 		// Check column
-		for (int i = 0; i < 3; i++) {
-			if (arenaData[x][y] == arenaData[x][y + 4] && arenaData[x][y] == arenaData[x][y + 8] && arenaData[x][y] != 0) {
-				// Winner is...
-				if (arenaData[x][y] == 1) {
-					// ... x
-					winner = 1;
+		int correctCount = 0;
+		for (int i = 0; i < boxSize; i++) {
+			for (int j = 0; j < (boxSize - 1); j++) {
+				if (getArenaData(i, j) == getArenaData(i, j + 1) && getArenaData(i, j) != 0) {
+					correctCount++;
 				}
-				else if (arenaData[x][y] == 2) {
-					// ... o
-					winner = 2;
-				}
-				return true;
-				break;
 			}
-			x += 2;
+			if (correctCount == (boxSize - 1)) {
+				winner = getArenaData(i, 0);
+				return true;
+			}
+			else {
+				correctCount = 0;
+			}
 		}
 
 
 		// Check line
-		x = 0; y = 2;
-		for (int i = 0; i < 3; i++) {
-			if (arenaData[x][y] == arenaData[x + 2][y] && arenaData[x][y] == arenaData[x + 4][y] && arenaData[x][y] != 0) {
-				// Winner is...
-				if (arenaData[x][y] == 1) {
-					// ... x
-					winner = 1;
+		for (int i = 0; i < boxSize; i++) {
+			for (int j = 0; j < (boxSize - 1); j++) {
+				if (getArenaData(j, i) == getArenaData(j + 1, i) && getArenaData(j, i) != 0) {
+					correctCount++;
 				}
-				else if (arenaData[x][y] == 2) {
-					// ... o
-					winner = 2;
-				}
-				return true;
-				break;
 			}
-			y += 4;
+			if (correctCount == (boxSize - 1)) {
+				winner = getArenaData(0, i);
+				return true;
+			}
+			else {
+				correctCount = 0;
+			}
 		}
 
 		// Check diagonaly
-		if (arenaData[0][2] == arenaData[2][6] && arenaData[0][2] == arenaData[4][10] && arenaData[0][2] != 0) {
-			// Winner is...
-			if (arenaData[0][2] == 1) {
-				// ... x
-				winner = 1;
+		for (int i = 0; i < (boxSize - 1); i++) {
+			if (getArenaData(0, 0) == getArenaData(i + 1, i + 1) && getArenaData(0, 0) != 0) {
+				correctCount++;
 			}
-			else if (arenaData[0][2] == 2) {
-				// ... o
-				winner = 2;
+			if (correctCount == (boxSize - 1)) {
+				winner = getArenaData(0, 0);
+				return true;
 			}
-			return true;
+			else {
+				correctCount = 0;
+			}
 		}
-		else if (arenaData[4][2] == arenaData[2][6] && arenaData[4][2] == arenaData[0][10] && arenaData[4][2] != 0) {
-			// Winner is...
-			if (arenaData[4][2] == 1) {
-				// ... x
-				winner = 1;
+
+		int j = 1;
+		for (int i = (boxSize - 1); i > 0; i--) {
+			if (getArenaData(0, boxSize - 1) == getArenaData(j, i - 1) && getArenaData(0, boxSize - 1) != 0) {
+				correctCount++;
 			}
-			else if (arenaData[4][2] == 2) {
-				// ... o
-				winner = 2;
+			if (correctCount == (boxSize - 1)) {
+				winner = getArenaData(0, boxSize - 1);
+				return true;
 			}
-			return true;
+			j++;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 	// Reset game to next play
 	void restartGame() {
 		// Cursor deafult
-		cursorPosition[0][0] = 1;
-		cursorPosition[0][1] = 2;
+		SetCursorToDefault();
+
+		// Arena to default
+		SetArenaToDefault();
 
 		// Set xTurn
 		setXTurn(true);
 
 		// Reset stepCount
-		stepCount = 0;
+		stepCount = 0;	
 
-		// Arena default
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 14; j++) {
-				if (cursorPosition[0][0] == i && cursorPosition[0][1] == j) {
-					arenaData[i][j] = 3;
-				}
-				else {
-					arenaData[i][j] = 0;
-				}
-			}
-		}
-		// Set Dasar Arena
-		setBox(arenaData);
-	}
+		// Load a New Game data
+		loadData();
+	}	
 
 	// Looping Game in here
 	void update() {
