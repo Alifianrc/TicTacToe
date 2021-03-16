@@ -1,9 +1,9 @@
 #include <iostream>
-
+// Alifian
 using namespace std;
 
 // Bix size is 3x3
-static int boxSize = 5;
+static int boxSize = 3;
 
 class Boxes {
 private:

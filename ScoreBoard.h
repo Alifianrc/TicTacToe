@@ -2,11 +2,11 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-
+// Alifian
 using namespace std;
 
 // Class Scoreboard
-class scoreBoards {
+class ScoreBoards {
 private:
 	// Struct for data score
 	struct score {
@@ -33,17 +33,17 @@ private:
 public:
 
 	// Constructor
-	scoreBoards() {
+	ScoreBoards() {
 		data = "<Data>";
 		xNam = "<xName>";
 		oNam = "<oName>";
 		win = "<win>";
 		last = "<last>";
 		close = "<Close>";
-		
+
 		fileName = "D:\\Tugas_Kuliah\\Pemrograman_4\\Minggu2\\TicTacToe\\score_data.txt";
 		MAX = 1000;
-		temp[1000];
+		//temp[1000];
 
 		lastXName = "<lastXName>";
 		lastOName = "<lastOName>";
@@ -112,6 +112,7 @@ public:
 		return data;
 	}
 
+	// Get last match data from data
 	int GetLastMatchData(int x) {
 		int findFront = 0;
 
@@ -140,6 +141,7 @@ public:
 		}
 	}
 
+	// Get data from Boxes class and save it in vector
 	void saveArenaData(int value) {
 		lastMatchData.push_back(value);
 	}
