@@ -1,7 +1,7 @@
 #include "Arena.h"
 #include "ThePlayer.h"
 #include "ScoreBoard.h"
-// Alifian
+// 4210191011 Alifian
 using namespace std;
 
 class TicTacToe {
@@ -43,7 +43,7 @@ public:
 		drawMenu(menuA);
 	}
 
-	// Get Kerboard input
+	// Get User Kerboard input
 	char getInput() {
 		char theInput = 'x';
 		if (_kbhit()) {
@@ -148,7 +148,7 @@ public:
 		}
 	}
 
-	// For resume game <- Revisi
+	// For resume game
 	void resumeGame() {
 		int arenaXCount = 0, arenaOCount = 0;
 
@@ -195,7 +195,7 @@ public:
 			arenaBox.drawBoxes();
 		}	
 	}
-	// For Game <- Revisi
+	// For Game
 	void mainGame() {
 		bool isUpdate = gameInput();
 
@@ -261,7 +261,7 @@ public:
 			drawMenu(menuA);
 		}
 	}
-	// For input user <- Revisi
+	// For input user
 	bool gameInput() {
 		bool update = false;
 		char input = getInput();
@@ -307,12 +307,6 @@ public:
 	}
 	// Check win condition
 	bool checkWin() {
-		// Draw case
-		if (stepCount >= (boxSize * boxSize)) {
-			winner = 3;
-			return true;
-		}
-
 		// Check column
 		int correctCount = 0;
 		for (int i = 0; i < boxSize; i++) {
@@ -373,6 +367,13 @@ public:
 			j++;
 		}
 
+		// Draw case
+		if (stepCount >= (boxSize * boxSize)) {
+			winner = 3;
+			return true;
+		}
+
+		// If not win yet
 		return false;
 	}
 	// Reset game to next play
