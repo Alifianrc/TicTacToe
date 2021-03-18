@@ -2,13 +2,13 @@
 // 4210191011 Alifian
 using namespace std;
 
-// Bix size is 3x3
+// Box size is 3x3
 static int boxSize = 3;
 
 class Boxes {
 private:
 	int arenaData[100][100];
-	int cursorPosition[1][2];
+	int cursorPosition[2];
 	bool xTrun;
 public:
 	// Almost useless constructor
@@ -23,24 +23,24 @@ public:
 	}
 
 	// Get cursor current location
-	int getCursorLoaction(int x, int y) {
-		return cursorPosition[x][y];
+	int getCursorLoaction(int a) {
+		return cursorPosition[a];
 	}
 
 	// Set cursor new location
-	void setCursorLocation(int x, int y, int value) {
+	void setCursorLocation(int a, int value) {
 		if (value == 1) {
-			cursorPosition[x][y]++;
+			cursorPosition[a]++;
 		}
 		else if (value == 0) {
-			cursorPosition[x][y]--;
+			cursorPosition[a]--;
 		}
 	}
 
 	// Set cursor to default
 	void SetCursorToDefault() {
-		cursorPosition[0][0] = 0;
-		cursorPosition[0][1] = 0;
+		cursorPosition[0] = 0;
+		cursorPosition[1] = 0;
 	}
 
 	// Set arena to default
@@ -54,13 +54,13 @@ public:
 
 	// Assign pon
 	bool AssignPon() {
-		if (getArenaIsEmpty(cursorPosition[0][0], cursorPosition[0][1]) == true) {
+		if (getArenaIsEmpty(cursorPosition[0], cursorPosition[1]) == true) {
 			if (xTrun) {
-				arenaData[cursorPosition[0][0]][cursorPosition[0][1]] = 1;
+				arenaData[cursorPosition[0]][cursorPosition[1]] = 1;
 				setXTurn(false);
 			}
 			else {
-				arenaData[cursorPosition[0][0]][cursorPosition[0][1]] = 2;
+				arenaData[cursorPosition[0]][cursorPosition[1]] = 2;
 				setXTurn(true);
 			}
 			return true;
@@ -147,7 +147,7 @@ public:
 			// For cursor
 			for (int j = 0; j < boxSize; j++) {
 				cout << "   ";
-				if (cursorPosition[0][0] == i && cursorPosition[0][1] == j) {
+				if (cursorPosition[0] == i && cursorPosition[1] == j) {
 					cout << "^";
 				}
 				else {

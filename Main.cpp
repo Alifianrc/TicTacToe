@@ -266,26 +266,26 @@ public:
 		bool update = false;
 		char input = getInput();
 		if (input == 'w') {
-			if (arenaBox.getCursorLoaction(0, 0) != 0) {
-				arenaBox.setCursorLocation(0, 0, 0);
+			if (arenaBox.getCursorLoaction(0) != 0) {
+				arenaBox.setCursorLocation(0, 0);
 			}
 			update = true;
 		}
 		else if (input == 'a') {
-			if (arenaBox.getCursorLoaction(0, 1) != 0) {
-				arenaBox.setCursorLocation(0, 1, 0);
+			if (arenaBox.getCursorLoaction(1) != 0) {
+				arenaBox.setCursorLocation(1, 0);
 			}
 			update = true;
 		}
 		else if (input == 's') {
-			if (arenaBox.getCursorLoaction(0, 0) != (boxSize - 1)) {
-				arenaBox.setCursorLocation(0, 0, 1);
+			if (arenaBox.getCursorLoaction(0) != (boxSize - 1)) {
+				arenaBox.setCursorLocation(0, 1);
 			}
 			update = true;
 		}
 		else if (input == 'd') {
-			if (arenaBox.getCursorLoaction(0, 1) != (boxSize - 1)) {
-				arenaBox.setCursorLocation(0, 1, 1);
+			if (arenaBox.getCursorLoaction(1) != (boxSize - 1)) {
+				arenaBox.setCursorLocation(1, 1);
 			}
 			update = true;
 		}
