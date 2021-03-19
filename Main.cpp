@@ -18,6 +18,7 @@ private:
 	int menuA;
 	
 	// Step
+	bool xTrun;
 	int stepCount = 0;
 	bool gameOver;
 	int winner;
@@ -27,6 +28,7 @@ public:
 	// Constructor
 	TicTacToe() {
 		// Game not started yet
+		xTrun = true;
 		inMenu = true;
 		isQuit = false;
 		gameOver = false;
@@ -101,7 +103,7 @@ public:
 
 				inMenu = false;
 				inGame = true;
-				arenaBox.drawBoxes();
+				arenaBox.drawBoxes(xTrun);
 
 				// Temporary
 				menuA = 0;
@@ -180,10 +182,10 @@ public:
 		else {
 			// Set witch turn
 			if (arenaXCount > arenaOCount) {
-				arenaBox.setXTurn(false);
+				xTrun = false;
 			}
 			else {
-				arenaBox.setXTurn(true);
+				xTrun = true;
 			}
 			
 			// Set stepCount
@@ -192,7 +194,7 @@ public:
 			// Diactivate menu
 			inMenu = false;
 			inGame = true;
-			arenaBox.drawBoxes();
+			arenaBox.drawBoxes(xTrun);
 		}	
 	}
 	// For Game
@@ -200,7 +202,7 @@ public:
 		bool isUpdate = gameInput();
 
 		if (isUpdate && !gameOver) {
-			arenaBox.drawBoxes();
+			arenaBox.drawBoxes(xTrun);
 			gameOver = checkWin();
 		}
 		// Game is Finish
@@ -292,7 +294,7 @@ public:
 		else if (input == '\r') {
 			bool ponAssigned = false;
 			// Assign Pon
-			ponAssigned = arenaBox.AssignPon();
+			ponAssigned = AssignPon();
 			if (ponAssigned == true) {
 				stepCount++;
 			}
@@ -304,6 +306,27 @@ public:
 		}
 
 		return update;
+	}
+	// Assign pon (x or o)
+	bool AssignPon() {
+		if (arenaBox.getArenaIsEmpty(arenaBox.getCursorLoaction(0), arenaBox.getCursorLoaction(1)) == true) {
+			if (xTrun) {
+				// Assign x
+				arenaBox.SetArenaData(arenaBox.getCursorLoaction(0), arenaBox.getCursorLoaction(1), 1);
+				xTrun = false;
+			}
+			else {
+				// Assign o
+				arenaBox.SetArenaData(arenaBox.getCursorLoaction(0), arenaBox.getCursorLoaction(1), 2);
+				xTrun = true;
+			}
+			// Pon Assigned
+			return true;
+		}
+		else {
+			// Fail to assign pon
+			return false;
+		}
 	}
 	// Check win condition
 	bool checkWin() {
@@ -385,7 +408,7 @@ public:
 		arenaBox.SetArenaToDefault();
 
 		// Set xTurn
-		arenaBox.setXTurn(true);
+		xTrun = true;
 
 		// Reset stepCount
 		stepCount = 0;	

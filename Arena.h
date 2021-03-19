@@ -9,12 +9,9 @@ class Boxes {
 private:
 	int arenaData[100][100];
 	int cursorPosition[2];
-	bool xTrun;
 public:
 	// Almost useless constructor
 	Boxes(){
-		xTrun = true;
-
 		// Deafult arena
 		SetArenaToDefault();
 
@@ -52,34 +49,6 @@ public:
 		}
 	}
 
-	// Assign pon
-	bool AssignPon() {
-		if (getArenaIsEmpty(cursorPosition[0], cursorPosition[1]) == true) {
-			if (xTrun) {
-				arenaData[cursorPosition[0]][cursorPosition[1]] = 1;
-				setXTurn(false);
-			}
-			else {
-				arenaData[cursorPosition[0]][cursorPosition[1]] = 2;
-				setXTurn(true);
-			}
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	// Get player turn
-	bool getXturn() {
-		return xTrun;
-	}
-
-	// Change player turn
-	void setXTurn(bool a) {
-		xTrun = a;
-	}
-
 	// Check if arena is empty
 	bool getArenaIsEmpty(int i, int j) {
 		if (arenaData[i][j] == 0) {
@@ -101,7 +70,7 @@ public:
 	}
 
 	// Draw arena box
-	void drawBoxes() {
+	void drawBoxes(bool xTrun) {
 		//Box size = 6x14
 		// 0 = " " ; 1 = "x" ; 2 = "o" ; 3 = "^"
 		/* 

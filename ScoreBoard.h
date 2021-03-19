@@ -124,21 +124,17 @@ public:
 
 	// Add new data score
 	void setDataScore(string xN, string oN, int wN) {
-		// New data will added on the top
-		dataScore[1].xName = dataScore[0].xName;
-		dataScore[1].oName = dataScore[0].oName;
-		dataScore[1].winner = dataScore[0].winner;
-
-		dataScore[0].xName = xN;
-		dataScore[0].oName = oN;
-		dataScore[0].winner = wN;
-
+		
 		// Move Back all data (data 2->3; data 3->4 ...)
-		for (int i = 99; i > 1; i--) {
+		for (int i = 99; i > 0; i--) {
 			dataScore[i].xName = dataScore[i - 1].xName;
 			dataScore[i].oName = dataScore[i - 1].oName;
 			dataScore[i].winner = dataScore[i - 1].winner;
 		}
+	
+		dataScore[0].xName = xN;
+		dataScore[0].oName = oN;
+		dataScore[0].winner = wN;		
 	}
 
 	// Get data from Boxes class and save it in vector
